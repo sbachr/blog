@@ -1,94 +1,71 @@
-process.env.NODE_ENV='test'
+// process.env.NODE_ENV='test'
 const User = require('../models/modelUser')
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../app');
-const expect = chai.expect;
-require('dotenv').config()
+var expect = chai.expect;
+
+
+console.log(User);
 
 chai.use(chaiHttp);
 console.log(process.env.NODE_ENV);
-describe('User', function() {
+describe('User', function () {
     let userObj = {}
-    
-    beforeEach(function(done) {
+
+    beforeEach(function (done) {
         User.create({
-            name: 'test',
+            username: 'test',
             email: 'test@mail.com',
             password: '123'
         })
-        .then(user => {
-            console.log(user);
-            
-            userObj = user
-            done()
-        })
+            .then(user => {
+                console.log(user);
+
+                userObj = user
+                done()
+            })
     })
 
-    afterEach(function(done) {
+    afterEach(function (done) {
         User.deleteMany(function (err) {
-            if(err){
+            if (err) {
                 console.log(err)
             }
             done()
-         });
+        });
     })
 
-    it('DISPLAY ALL USERS on /users (GET)', function(done) {
+    it('DISPLAY ALL USERS on /users (GET)', function (done) {
         chai.request(app)
             .get('/users')
-            .end(function(err, res) {
+            .end(function (err, res) {
                 expect(res).to.have.status(200)
                 done()
             })
     });
-    it('DISPLAY USER BY ID on /users/:id (GET)', function(done) {
-        chai.request(app)
-            .get('/users')
-            .send({id: '5b9f35107fa94119caa9fe29'})
-            .end(function(err, res) {
-                expect(res).to.have.status(200)
-                done()
-            })
-    });
-    it('REGISTER on /register (POST)', function(done) {
+
+    it('REGISTER on /register (POST)', function (done) {
         chai.request(app)
             .post('/register')
             .send({ name: 'test3', email: 'test1@mail.com', password: '123' })
-            .end(function(err, res) {
+            .end(function (err, res) {
                 expect(res).to.have.status(201)
                 done()
             })
     })
-    it('SIGN IN on /users/signin (POST)', function(done) {
+    it('SIGN IN on /login (POST)', function (done) {
 
         chai.request(app)
-            .post('/users/signin')
+            .post('/login')
             .send({ email: userObj.email, password: userObj.password })
-            .end(function(err, res) {
+            .end(function (err, res) {
                 expect(res).to.have.status(200)
                 expect(res.body).to.have.property('user')
                 expect(res.body.user).to.be.a('object')
                 expect(res.body.user.name).to.equal('test')
                 expect(res.body.user.email).to.equal('test@mail.com')
                 expect(res.body.user.password).to.equal('123')
-                done()
-            })
-    })
-    it('EDIT on /users/:id (PUT)', function(done) {
-        chai.request(app)
-            .put(`/users/${userObj._id}`)
-            .send({ name: 'updatedName' })
-            .end(function(err, res) {
-                expect(res).to.have.status(200)
-                done()
-            })
-    })
-    it('DELETE on /users/:id (DELETE)', function(done) {
-        chai.request(app)
-            .delete(`/users/${userObj._id}`)
-            .end(function(err, res) {
-                expect(res).to.have.status(200)
                 done()
             })
     })
