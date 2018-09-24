@@ -1,5 +1,5 @@
 const User = require('../models/modelUser')
-const jwt = require('jsonwebtoken')
+const { bcryptDecoded, jwtSign, jwtVerify } = require('../helpers/helpser')
 
 module.exports = {
 
@@ -24,15 +24,32 @@ module.exports = {
     },
 
     login: (req, res) => {
+        let password = req.body.password
+
         let where = {
             email: req.body.email
         }
 
         User.findOne(where)
             .then(userData => {
-                res.status(200).json({
-                    data: userData
-                })
+                let hashPassword = userData.password
+                console.log(userData);
+                if (bcryptDecoded(password, hashPassword)) {
+                    let token = jwtSign({
+                        _id: userData._id,
+                        email: userData.email,
+                        username: userData.username,
+                    })
+                    // console.log(token)
+                    // console.log(jwtVerify(token))
+                    res.status(200).json({
+                        data: token
+                    })
+                } else {
+                    res.status(404).json({
+                        message: 'Wrong email or password'
+                    })
+                }
             })
             .catch(err => {
                 res.status(500).json({ error: err.message })

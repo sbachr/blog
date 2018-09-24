@@ -1,10 +1,14 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const Comment = require('./modelComment')
+
 
 const articleSchema = new Schema({
     articleName: String,
     description: String,
-    userId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+    category: { type: Schema.Types.ObjectId, ref: 'Category' },
+    author: { type: Schema.Types.ObjectId, ref: 'User' },
+    comments: [Comment.schema]
 }, { timestamps: true })
 
 

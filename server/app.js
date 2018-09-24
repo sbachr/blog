@@ -8,6 +8,7 @@ const cors = require('cors')
 
 const RouterUser = require('./routes/routerUser')
 const RouterArticle = require('./routes/routerArticle')
+const RouterComment = require('./routes/routerComment')
 
 let database = process.env.DATABASE_DEV
 if (process.env.NODE_ENV == 'test') {
@@ -31,9 +32,12 @@ app.use(express.json())
 
 app.use('/', RouterUser)
 app.use('/article', RouterArticle)
+app.use('/comment', RouterComment)
 
 
 
 app.listen(port, function(){
     console.log(`Server is running at port ${port}`);
 })
+
+
