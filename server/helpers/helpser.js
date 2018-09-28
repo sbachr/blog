@@ -19,14 +19,14 @@ module.exports = {
         return token
     },
 
-    isLogin : function(req,res,next){
-        jwt.verify(req.headers.authorization,process.env.SECRET_KEY,function(err,decoded){
-            if (!err){
-                 req.user = decoded
-                 console.log(req.user,'ini req user')
-                 next()
+    isLogin: function (req, res, next) {
+        jwt.verify(req.headers.authorization, process.env.SECRET_KEY, function (err, decoded) {
+            if (!err) {
+                req.user = decoded
+                console.log(req.user, 'ini req user')
+                next()
             } else {
-                res.status(500).json({message:err})
+                res.status(500).json({ message: err })
             }
         })
     },

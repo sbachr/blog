@@ -7,12 +7,11 @@ module.exports = {
         Article.create({
             articleName: req.body.articleName,
             description: req.body.description,
-            author: req.user._id
+            author: req.body._id
         })
             .then(articleData => {
                 res.status(200).json({
-                    msg: `Success create article`,
-                    data: articleData
+                    articleData
                 })
             })
             .catch(err => {
@@ -39,7 +38,7 @@ module.exports = {
     readAllArticle: (req, res) => {
 
         Article.find()
-            .sort([['createdAt', 'discending']])
+            // .sort([['createdAt', 'discending']])
             .populate('author')
             .populate('comment')
             .then(articleAll => {
@@ -91,22 +90,22 @@ module.exports = {
             })
     },
 
-    addComment: (req,res) =>{
+    addComment: (req, res) => {
         let obj = {
             userId: req.user._id,
             comment: req.body.comment
-          }
-          Article.findByIdAndUpdate(req.params.id, {
+        }
+        Article.findByIdAndUpdate(req.params.id, {
             $push: {
-              comments: obj
+                comments: obj
             }
-          }, { new: true }).populate('comments.creator').exec((err, data) => {
+        }, { new: true }).populate('comments.creator').exec((err, data) => {
             if (err) {
-              res.status(500).json({ message: err })
+                res.status(500).json({ message: err })
             } else {
-              res.status(200).json({ message: 'ngomen', data: data })
+                res.status(200).json({ message: 'ngomen', data: data })
             }
-          })
-      
+        })
+
     }
 }
